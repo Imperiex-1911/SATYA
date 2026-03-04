@@ -26,3 +26,24 @@ desktop.ini
 *.tmp
 *.log
 parse_ppt.py
+
+# Secrets — NEVER commit
+.env
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# CDK infra
+infra/node_modules/
+infra/cdk.out/
+
+# Model cache (faster-whisper downloads ~500MB models)
+models/
+*.bin
+*.gguf
+
+# Claude session temp files
+tmpclaude-*
+nul
