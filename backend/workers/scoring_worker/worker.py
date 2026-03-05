@@ -195,6 +195,26 @@ def main():
             if items:
                 logger.info(f"Found {len(items)} item(s) ready to score")
                 for item in items:
+                    analysis_id = item.get("analysis_id", "?")
+
+                    # ── Grace period: wait up to 3 min for audio worker ──────
+                    has_audio = item.get("audio_score") is not None
+                    try:
+                        created = datetime.fromisoformat(
+                            item.get("created_at", "").replace("Z", "+00:00")
+                        )
+                        age_s = (datetime.now(timezone.utc) - created).total_seconds()
+                    except Exception:
+                        age_s = 999
+
+                    if not has_audio and age_s < 180:
+                        logger.info(
+                            f"[{analysis_id}] Waiting for audio worker "
+                            f"({age_s:.0f}s elapsed, timeout=180s) — skipping for now"
+                        )
+                        continue
+                    # ────────────────────────────────────────────────────────
+
                     try:
                         score_item(item, table, table_trending)
                     except Exception as e:
