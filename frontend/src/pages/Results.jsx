@@ -267,7 +267,7 @@ export default function Results() {
               <div className="card">
                 <div className="flex items-center gap-2 mb-3">
                   <span className="text-xs bg-violet-900/40 text-violet-400 border border-violet-800
-                                   px-2 py-0.5 rounded-full">Claude 3 Haiku</span>
+                                   px-2 py-0.5 rounded-full">Amazon Nova Micro</span>
                   <h3 className="text-sm font-semibold text-white">AI Explanation</h3>
                 </div>
                 <p className="text-sm text-slate-200 leading-relaxed mb-4">{data.summary}</p>
