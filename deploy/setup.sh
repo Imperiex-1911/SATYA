@@ -20,12 +20,16 @@ echo "[1/7] Installing system packages..."
 sudo apt-get update -y
 sudo apt-get install -y \
     python3.11 python3.11-venv python3-pip \
-    nodejs npm \
     nginx \
     git screen \
     ffmpeg \
     libsndfile1 \
     curl
+
+# Node.js 20 LTS via NodeSource (Ubuntu default apt gives v12 which is too old for Vite 5)
+echo "  Installing Node.js 20 LTS..."
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+sudo apt-get install -y nodejs
 
 # ── 2. Clone repository ────────────────────────────────────────────────────
 echo "[2/7] Cloning repository..."
