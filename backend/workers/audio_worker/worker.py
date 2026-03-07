@@ -130,7 +130,7 @@ def process_job(message: dict):
         audio_data["transcript"] = transcribe_result.get("transcript", "")[:1000]  # cap at 1KB
 
         # ── Step 6: DynamoDB ──
-        update_dynamodb(analysis_id, created_at, "audio_done", audio_data)
+        update_dynamodb(analysis_id, created_at, "processing", audio_data)
 
         logger.info(f"[{analysis_id}] ✅ Audio complete: score={audio_data['audio_score']}")
 

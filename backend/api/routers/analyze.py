@@ -145,9 +145,15 @@ async def get_analysis(analysis_id: str):
         for f in raw_findings
     ] if raw_findings else None
 
+    raw_status = item.get("status", "processing")
+    try:
+        safe_status = AnalysisStatus(raw_status)
+    except ValueError:
+        safe_status = AnalysisStatus.PROCESSING
+
     return AnalysisResult(
         analysis_id=item["analysis_id"],
-        status=AnalysisStatus(item.get("status", "processing")),
+        status=safe_status,
         content_url=item.get("content_url"),
         platform=item.get("platform"),
         language=item.get("language"),

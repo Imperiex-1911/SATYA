@@ -188,6 +188,10 @@ export default function Results() {
       }
     } catch (err) {
       setFetchError(err.message)
+      // Retry on server errors (5xx) — result may still arrive; stop only on 404 (not found)
+      if (!err.status || err.status >= 500) {
+        timerRef.current = setTimeout(poll, POLL_INTERVAL_MS)
+      }
     }
   }, [analysisId])
 
