@@ -2,6 +2,8 @@ import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { submitAnalysis, LANGUAGES } from '../api'
 
+const DEMO_URL = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'
+
 const PLATFORMS = [
   { id: 'youtube',    label: 'YouTube',   icon: '▶', color: 'text-red-400',    border: 'border-red-800'    },
   { id: 'instagram',  label: 'Instagram', icon: '📷', color: 'text-pink-400',  border: 'border-pink-800'  },
@@ -139,6 +141,20 @@ export default function Home() {
             </form>
           </div>
 
+          {/* Demo URL for judges */}
+          <div className="flex items-center justify-center gap-2 mb-6">
+            <span className="text-xs text-satya-muted">Try a demo:</span>
+            <button
+              type="button"
+              onClick={() => setUrl(DEMO_URL)}
+              className="text-xs text-blue-400 hover:text-blue-300 border border-blue-800
+                         hover:border-blue-600 bg-blue-900/20 px-3 py-1 rounded-full
+                         transition-colors"
+            >
+              ▶ Rick Astley — Never Gonna Give You Up (YouTube)
+            </button>
+          </div>
+
           {/* Platform badges */}
           <div className="flex flex-wrap items-center justify-center gap-2 mb-10">
             <span className="text-xs text-satya-muted">Supports:</span>
@@ -184,7 +200,7 @@ export default function Home() {
       <footer className="border-t border-satya-border px-6 py-4 text-center">
         <p className="text-xs text-satya-muted">
           SATYA — Team Imperials · AWS AI for Bharat Hackathon 2026 ·
-          Built with AWS Bedrock, Claude 3 Haiku, and faster-whisper
+          Built with AWS Bedrock, Amazon Nova Micro, and faster-whisper
         </p>
       </footer>
     </div>
