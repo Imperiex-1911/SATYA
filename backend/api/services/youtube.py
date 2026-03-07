@@ -102,8 +102,9 @@ def download_video(url: str, output_dir: str, max_duration: int = 600) -> str:
     }
 
     # Use cookies file if present — required on cloud IPs blocked by YouTube bot detection
+    # youtube.py is at backend/api/services/ — 4x dirname reaches project root
     _cookies_path = os.path.join(
-        os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "cookies.txt"
+        os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))), "cookies.txt"
     )
     if os.path.exists(_cookies_path):
         ydl_opts["cookiefile"] = _cookies_path
