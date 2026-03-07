@@ -1,5 +1,6 @@
 """YouTube connector — metadata fetch via Data API v3 + video download via yt-dlp."""
 
+import glob
 import os
 import re
 import logging
@@ -117,13 +118,21 @@ def download_video(url: str, output_dir: str, max_duration: int = 600) -> str:
             # Expected when max_downloads=1 — download completed successfully
             pass
 
-    # Find the downloaded file (yt-dlp may choose different extension)
-    for ext in ["mp4", "webm", "mkv", "avi"]:
+    # Find the downloaded file — yt-dlp may choose a different extension
+    for ext in ["mp4", "webm", "mkv", "avi", "m4v", "mov"]:
         candidate = os.path.join(output_dir, f"video.{ext}")
         if os.path.exists(candidate) and os.path.getsize(candidate) > 0:
             logger.info(
                 f"Downloaded video: {candidate} ({os.path.getsize(candidate)} bytes)"
             )
             return candidate
+
+    # Fallback: find any non-partial video file yt-dlp wrote to the directory
+    all_files = sorted(glob.glob(os.path.join(output_dir, "video.*")))
+    logger.info(f"Extension search missed; files in {output_dir}: {all_files}")
+    for f in all_files:
+        if not f.endswith((".part", ".ytdl", ".json")) and os.path.getsize(f) > 0:
+            logger.info(f"Downloaded video (glob fallback): {f} ({os.path.getsize(f)} bytes)")
+            return f
 
     raise FileNotFoundError(f"Download failed — no video file found in {output_dir}")
