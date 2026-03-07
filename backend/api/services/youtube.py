@@ -101,6 +101,14 @@ def download_video(url: str, output_dir: str, max_duration: int = 600) -> str:
         "extractor_retries": 3,
     }
 
+    # Use cookies file if present — required on cloud IPs blocked by YouTube bot detection
+    _cookies_path = os.path.join(
+        os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "cookies.txt"
+    )
+    if os.path.exists(_cookies_path):
+        ydl_opts["cookiefile"] = _cookies_path
+        logger.info("Using cookies.txt for yt-dlp authentication")
+
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         try:
             ydl.download([url])
