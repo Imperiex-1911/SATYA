@@ -86,20 +86,23 @@ def download_video(url: str, output_dir: str, max_duration: int = 600) -> str:
     """
     output_template = os.path.join(output_dir, "video.%(ext)s")
 
+    class _YDLLogger:
+        def debug(self, msg):
+            if msg.startswith("[debug]"):
+                return  # skip verbose debug lines
+            logger.debug(f"yt-dlp: {msg}")
+        def info(self, msg):   logger.info(f"yt-dlp: {msg}")
+        def warning(self, msg): logger.warning(f"yt-dlp: {msg}")
+        def error(self, msg):  logger.error(f"yt-dlp: {msg}")
+
     ydl_opts = {
         "format": "best[height<=720][ext=mp4]/best[height<=720]/best",
         "outtmpl": output_template,
-        "quiet": True,
-        "no_warnings": True,
-        "max_downloads": 1,
-        "match_filter": yt_dlp.utils.match_filter_func(
-            f"duration <= {max_duration}"
-        ),
+        "logger": _YDLLogger(),
         "socket_timeout": 60,
-        "retries": 5,
-        "fragment_retries": 5,
+        "retries": 3,
+        "fragment_retries": 3,
         "merge_output_format": "mp4",
-        "extractor_retries": 3,
     }
 
     # Use cookies file if present — required on cloud IPs blocked by YouTube bot detection
@@ -112,11 +115,7 @@ def download_video(url: str, output_dir: str, max_duration: int = 600) -> str:
         logger.info("Using cookies.txt for yt-dlp authentication")
 
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        try:
-            ydl.download([url])
-        except yt_dlp.utils.MaxDownloadsReached:
-            # Expected when max_downloads=1 — download completed successfully
-            pass
+        ydl.download([url])
 
     # Find the downloaded file — yt-dlp may choose a different extension
     for ext in ["mp4", "webm", "mkv", "avi", "m4v", "mov"]:
