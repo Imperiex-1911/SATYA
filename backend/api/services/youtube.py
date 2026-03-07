@@ -103,6 +103,9 @@ def download_video(url: str, output_dir: str, max_duration: int = 600) -> str:
         "retries": 3,
         "fragment_retries": 3,
         "merge_output_format": "mp4",
+        # Use Android + web clients — Android bypasses the JS signature/n challenge
+        # that fails when no external JS runtime is configured on the server.
+        "extractor_args": {"youtube": {"player_client": ["android", "web"]}},
     }
 
     # Use cookies file if present — required on cloud IPs blocked by YouTube bot detection
