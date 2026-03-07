@@ -96,7 +96,7 @@ def download_video(url: str, output_dir: str, max_duration: int = 600) -> str:
         def error(self, msg):  logger.error(f"yt-dlp: {msg}")
 
     ydl_opts = {
-        "format": "best[height<=720][ext=mp4]/best[height<=720]/best",
+        "format": "best[height<=720][ext=mp4]/best[ext=mp4]/best[height<=720]/best",
         "outtmpl": output_template,
         "logger": _YDLLogger(),
         "socket_timeout": 60,
@@ -115,7 +115,16 @@ def download_video(url: str, output_dir: str, max_duration: int = 600) -> str:
         logger.info("Using cookies.txt for yt-dlp authentication")
 
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        ydl.download([url])
+        try:
+            ydl.download([url])
+        except yt_dlp.utils.DownloadError as e:
+            msg = str(e)
+            if "images are available" in msg or "Requested format is not available" in msg:
+                raise ValueError(
+                    "No downloadable video stream found. This video may be audio-only, "
+                    "a podcast, or a YouTube Short with restricted formats."
+                ) from e
+            raise
 
     # Find the downloaded file — yt-dlp may choose a different extension
     for ext in ["mp4", "webm", "mkv", "avi", "m4v", "mov"]:
