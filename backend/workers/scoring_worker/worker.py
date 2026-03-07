@@ -188,7 +188,6 @@ def main():
                     & Attr("satya_score").not_exists()
                     & Attr("status").ne("failed")
                 ),
-                Limit=10,   # process up to 10 at a time
             )
 
             items = response.get("Items", [])
