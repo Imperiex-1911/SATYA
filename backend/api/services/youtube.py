@@ -103,20 +103,11 @@ def download_video(url: str, output_dir: str, max_duration: int = 600) -> str:
         "retries": 3,
         "fragment_retries": 3,
         "merge_output_format": "mp4",
-        # Force Android + TV clients — these don't require JS signature/n challenge solving.
-        # The web client (default when cookies are present) requires JS challenge solving
-        # which fails without a configured JS runtime, leaving only images available.
-        "extractor_args": {"youtube": {"player_client": ["android", "tv_embedded"]}},
+        # Android client: no JS signature/n challenge needed, and its own
+        # API key bypasses EC2 IP bot detection without browser cookies.
+        # Do NOT pass cookiefile — Android client skips when cookies are present.
+        "extractor_args": {"youtube": {"player_client": ["android"]}},
     }
-
-    # Use cookies file if present — required on cloud IPs blocked by YouTube bot detection
-    # youtube.py is at backend/api/services/ — 4x dirname reaches project root
-    _cookies_path = os.path.join(
-        os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))), "cookies.txt"
-    )
-    if os.path.exists(_cookies_path):
-        ydl_opts["cookiefile"] = _cookies_path
-        logger.info("Using cookies.txt for yt-dlp authentication")
 
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         try:
